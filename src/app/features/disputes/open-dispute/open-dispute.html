@@ -1,1 +1,17 @@
-<p>open-dispute works!</p>
+<h2>Open Dispute</h2>
+<div class="form-group">
+  <label>Select Transaction:</label>
+  <select [(ngModel)]="selectedTxId">
+    <option [ngValue]="null">--Select--</option>
+    <option *ngFor="let tx of transactions()" [ngValue]="tx.id">
+      {{ tx.id }} - {{ tx.description }} - {{ tx.amount }}
+    </option>
+  </select>
+</div>
+
+<div class="form-group">
+  <label>Reason:</label>
+  <input type="text" [(ngModel)]="reason" placeholder="Enter reason">
+</div>
+
+<button (click)="openDispute()">Open Dispute</button>

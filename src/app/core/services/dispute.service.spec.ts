@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DisputeService } from './dispute';
+import { DisputeService } from './dispute.service';
 
 describe('Dispute', () => {
   let service: DisputeService;

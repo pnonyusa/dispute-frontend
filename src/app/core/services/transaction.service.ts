@@ -3,18 +3,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SystemEnvironment } from '../constants/system-environment';
+import { Transaction } from '../../model/transaction-model/transaction';
 
-export interface TransactionService {
-  id: number;
-  description: string;
-  amount: number;
-  disputed: boolean;
-
-  createdAt?: string;
-  createdBy?: string;
-  updatedAt?: string;
-  updatedBy?: string;
-}
 
 @Injectable({
   providedIn: 'root',
@@ -25,16 +15,16 @@ export class TransactionService {
   
     constructor(private http: HttpClient) {}
   
-    getTransactions(): Observable<TransactionService[]> {
-      return this.http.get<TransactionService[]>(`${this.baseUrl}${SystemEnvironment.ENDPOINTS.TRANSACTIONS}`);
+    getTransactions(): Observable<Transaction[]> {
+      return this.http.get<Transaction[]>(`${this.baseUrl}${SystemEnvironment.ENDPOINTS.TRANSACTIONS}`);
     }
 
-    create(tx: TransactionService): Observable<TransactionService> {
-     return this.http.post<TransactionService>(`${this.baseUrl}${SystemEnvironment.ENDPOINTS.TRANSACTIONS}`, tx);
+    create(tx: Transaction): Observable<Transaction> {
+     return this.http.post<Transaction>(`${this.baseUrl}${SystemEnvironment.ENDPOINTS.TRANSACTIONS}`, tx);
     }
   
-    getTransactionById(id: number): Observable<TransactionService> {
-      return this.http.get<TransactionService>(`${this.baseUrl}${SystemEnvironment.ENDPOINTS.TRANSACTIONS}/${id}`);
+    getTransactionById(id: number): Observable<Transaction> {
+      return this.http.get<Transaction>(`${this.baseUrl}${SystemEnvironment.ENDPOINTS.TRANSACTIONS}/${id}`);
     }
 
     delete(id: number): Observable<void> {

@@ -1,0 +1,19 @@
+<div class="home-container">
+  <header>
+    <h1>Dispute Portal</h1>
+  </header>
+
+  <nav class="nav-bar">
+    <button (click)="activeTab = 'transactions'" [class.active]="activeTab === 'transactions'">Transactions</button>
+    <button (click)="activeTab = 'create'" [class.active]="activeTab === 'create'">Create Transaction</button>
+    <button (click)="activeTab = 'open-dispute'" [class.active]="activeTab === 'open-dispute'">Open Dispute</button>
+    <button (click)="activeTab = 'dispute-history'" [class.active]="activeTab === 'dispute-history'">Dispute History</button>
+  </nav>
+
+  <section class="tab-content">
+    <app-transaction-list *ngIf="activeTab === 'transactions'"></app-transaction-list>
+    <app-create-transaction *ngIf="activeTab === 'create'"></app-create-transaction>
+    <app-open-dispute *ngIf="activeTab === 'open-dispute'"></app-open-dispute>
+    <app-dispute-history *ngIf="activeTab === 'dispute-history'"></app-dispute-history>
+  </section>
+</div>

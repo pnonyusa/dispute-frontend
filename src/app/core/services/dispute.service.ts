@@ -2,26 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SystemEnvironment } from '../constants/system-environment';
-import { Transaction} from './transaction.service';
+import {Dispute, DisputeRequest } from '../../model/dispute/dispute';
+import { Transaction } from '../../model/transaction-model/transaction';
 
 
-export interface Dispute {
-  id?: number;
-  transaction: Transaction;
-  reason: string;
-  status?: string;
-
-  createdAt?: string;
-  createdBy?: string;
-  updatedAt?: string;
-  updatedBy?: string;
-}
-
-export interface DisputeRequest {
-  transactionId: number;
-  reason: string;
-  strategyType: string;
-}
 
 @Injectable({
   providedIn: 'root',

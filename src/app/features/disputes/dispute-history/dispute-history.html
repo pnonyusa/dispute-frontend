@@ -1,1 +1,20 @@
-<p>dispute-history works!</p>
+<h2>Dispute History</h2>
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Transaction</th>
+    <th>Reason</th>
+    <th>Status</th>
+    <th>Actions</th>
+  </tr>
+  <tr *ngFor="let d of disputes()">
+    <td>{{ d.id }}</td>
+    <td>{{ d.transaction.description }}</td>
+    <td>{{ d.reason }}</td>
+    <td>{{ d.status }}</td>
+    <td>
+      <button (click)="deleteDispute(d.id!)">Delete</button>
+    </td>
+  </tr>
+</table>
+
