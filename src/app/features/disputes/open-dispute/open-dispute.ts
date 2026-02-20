@@ -19,6 +19,7 @@ export class OpenDispute implements OnInit {
   private _selectedTxId = signal<number>(0);
   private _reason = signal('');
   private _strategyType = signal('DEFAULT');
+  private _isProcessing = signal(false); // 🔹 signal to track request state
 
   constructor(private txService: TransactionService, private disputeService: DisputeService) {}
 
@@ -32,6 +33,8 @@ export class OpenDispute implements OnInit {
   get strategyType() { return this._strategyType(); }
   set strategyType(value: string) { this._strategyType.set(value); }
 
+  get isProcessing() { return this._isProcessing(); }
+
   ngOnInit(): void {
       this.txService.getTransactions().subscribe(data =>{ 
         console.log('Transactions fetched:', data);
@@ -43,6 +46,7 @@ export class OpenDispute implements OnInit {
     const txId = this.selectedTxId;
     const reason = this.reason;
 
+    // 🔹 Client-side validation
     if (!txId || !reason) {
       alert('Select a transaction and enter reason');
       return;
@@ -54,6 +58,7 @@ export class OpenDispute implements OnInit {
       return;
     }
 
+    // 🔹 Strategy selection based on amount (must match backend bean names)
     const strategy = transaction.amount > 100 ? 'auto' : 'default';
 
     const request: DisputeRequest = {
@@ -62,13 +67,26 @@ export class OpenDispute implements OnInit {
       strategyType: strategy
     };
 
+    this._isProcessing.set(true); // disable button/form while processing
+
     this.disputeService.openDispute(request).subscribe({
       next: () => {
-        alert(`Dispute opened using ${strategy} strategy`);
+        alert(`Dispute opened successfully using "${strategy}" strategy`);
+        // reset form
         this.selectedTxId = 0;
         this.reason = '';
+        this._isProcessing.set(false);
       },
-      error: err => console.error(err)
+      error: err => {
+        // 🔹 Display backend validation errors clearly
+        if (err.error?.message) {
+          alert(`Failed to open dispute: ${err.error.message}`);
+        } else {
+          alert('Failed to open dispute due to server error');
+        }
+        console.error('Dispute error:', err);
+        this._isProcessing.set(false);
+      }
     });
   }
 }

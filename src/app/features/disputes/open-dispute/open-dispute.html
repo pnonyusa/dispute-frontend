@@ -14,4 +14,6 @@
   <input type="text" [(ngModel)]="reason" placeholder="Enter reason">
 </div>
 
-<button (click)="openDispute()">Open Dispute</button>
+<button (click)="openDispute()" [disabled]="isProcessing">
+  Open Dispute
+</button>
