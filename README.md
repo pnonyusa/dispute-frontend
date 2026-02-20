@@ -84,15 +84,23 @@ ng build --configuration production
 3. Create a `Dockerfile` in the Angular project root:
 
 ```dockerfile
-FROM node:18-alpine as build
+# Stage 1: Build
+FROM node:22-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN npm run build --prod
+RUN npm run build
 
+# Stage 2: Serve
 FROM nginx:alpine
-COPY --from=build /app/dist/your-angular-app /usr/share/nginx/html
+# 1. Match the name "builder" 
+# 2. Point to the "/browser" subfolder for static hosting
+COPY --from=builder /app/dist/dispute-portal/browser /usr/share/nginx/html
+
+# 3. Add routing fix (prevents 404s on refresh)
+RUN sed -i 's|index  index.html index.htm;|index  index.html index.htm; try_files $uri $uri/ /index.html;|g' /etc/nginx/conf.d/default.conf
+
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 ```
@@ -100,8 +108,8 @@ CMD ["nginx", "-g", "daemon off;"]
 4. Build and run the Docker image:
 
 ```bash
-docker build -t angular-dispute-ui .
-docker run -d -p 4200:80 angular-dispute-ui
+docker build -t angular-app .
+docker run -d -p 4200:80 angular-app
 ```
 
 ### Step 2: Build Spring Boot Backend Docker Image
@@ -115,20 +123,35 @@ cd dispute
 2. Create a `Dockerfile` in the Spring Boot project root:
 
 ```dockerfile
-FROM eclipse-temurin:21-jdk-alpine
-VOLUME /tmp
-ARG JAR_FILE=target/dispute-backend-0.0.1-SNAPSHOT.jar
-COPY ${JAR_FILE} app.jar
+# --- STAGE 1: Build (The "builder" stage) ---
+FROM maven:3.9.9-eclipse-temurin-21-alpine AS builder
+WORKDIR /app
+
+# 1. Cache dependencies
+COPY pom.xml .
+RUN mvn dependency:go-offline
+
+# 2. Build the JAR
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# --- STAGE 2: Run (The final slim image) ---
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+
+# 3. Copy the result FROM the builder stage into this new stage
+COPY --from=builder /app/target/dispute-0.0.1-SNAPSHOT.jar app.jar
+
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
 ```
 
 3. Build and run the Docker image:
 
 ```bash
 mvn clean package -DskipTests
-docker build -t springboot-dispute-backend .
-docker run -d -p 8080:8080 springboot-dispute-backend
+docker build -t dispute .
+docker run -d -p 8080:8080 dispute
 ```
 
 
