@@ -4,7 +4,7 @@
 
 The **Dispute Management System** is designed to handle financial transaction disputes in a structured and automated way. It integrates multiple design patterns to ensure flexibility, maintainability, and scalability:
 
-- **Chain of Responsibility**: Validates transactions through a chain of handlers (e.g., `AlreadyDisputedHandler`, `FraudValidationHandler`) to enforce business rules.
+- **Chain of Responsibility**: Validates transactions through a chain of handlers (`AlreadyDisputedHandler`, `FraudValidationHandler`) to enforce business rules.
 - **Strategy Pattern**: Applies different dispute resolution strategies (e.g., automatic refund, manual review) based on transaction attributes.
 - **Command Pattern**: Executes the selected strategy in a decoupled way.
 - **Observer Pattern**: Publishes notifications after dispute processing, enabling other systems to react to dispute events.
@@ -72,7 +72,7 @@ export const SystemEnvironment = {
 1. Navigate to the Angular project folder:
 
 ```bash
-cd path-to-angular-project
+cd dispute-portal
 ```
 
 2. Build the Angular production files:
@@ -109,7 +109,7 @@ docker run -d -p 4200:80 angular-dispute-ui
 1. Navigate to the Spring Boot project folder:
 
 ```bash
-cd path-to-springboot-project
+cd dispute
 ```
 
 2. Create a `Dockerfile` in the Spring Boot project root:
